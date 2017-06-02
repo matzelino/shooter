@@ -101,7 +101,7 @@ class Weapon(pygame.sprite.Sprite):
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.player = player
-        self.allspritesGroup = allspritesGroups
+        self.allspritesGroup = allspritesGroup
         self.bulletGroup = bulletGroup
         self.bulletSprite = bulletSprite
         
@@ -349,19 +349,19 @@ class Weapon_Side(pygame.sprite.Sprite):
 
 
 class Weapon_Enemy_Standard(pygame.sprite.Sprite):
-    def __init__(self, player, weaponSprite, allspritesGroup, bulletSprite, bulletGroup):
+    def __init__(self, enemy, weaponSprite, allspritesGroup, bulletSprite, bulletGroup):
 #        super(Weapon, self).__init__(self, player, weaponSprite, allspritesGroup, bulletSprite, bulletGroup)
  
         pygame.sprite.Sprite.__init__(self)
         self.image = weaponSprite
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        self.player = player
+        self.enemy = enemy
         self.allspritesGroup = allspritesGroup
         self.bulletGroup = bulletGroup
         self.bulletSprite = bulletSprite
         
-        ## place the bullet according to the current position of the player
+        ## place the bullet according to the current position of the enemy
         self.rect.bottom = 0
         self.rect.centerx = 0
         
@@ -827,7 +827,6 @@ sprites['bullet_back'] = pygame.image.load(path.join(folder['gfx'], 'bullet_back
 
 sprites['weapon_standard'] = pygame.image.load(path.join(folder['gfx'], 'weapon_standard.png')).convert_alpha()
 sprites['weapon_rocket'] = pygame.image.load(path.join(folder['gfx'], 'weapon_rocket.png')).convert_alpha()
-
 sprites['weapon_enemy_standard'] = pygame.image.load(path.join(folder['gfx'], 'weapon_standard.png')).convert_alpha()
 
 player_mini_img = pygame.transform.scale(sprites['player'], (25, 19))
@@ -916,13 +915,14 @@ while running:
             if event.key == pygame.K_e:
                 bezier = createBezierCurve(WIDTH, HEIGHT, 4, 100)
                 enemy = Enemy(sprites['enemy'], bezier)
-                enemy.addWeapon(Weapon_Enemy_Standard(enemy))
+                #enemy.addWeapon(Weapon_Enemy_Standard(enemy))
+                enemy.addWeapon(Weapon_Enemy_Standard(enemy, sprites['weapon_enemy_standard'], all_sprites, sprites['bullet_standard'], bullets))
                 all_sprites.add(enemy)
 
             if event.key == pygame.K_p:
-                player.addWeapon(Weapon_Side(player))
-                player.addWeapon(Weapon_Back(player))
-                player.addWeapon(Weapon_Rocket(player))
+                player.addWeapon(Weapon_Side(player, sprites['weapon_standard'], all_sprites, sprites['bullet_standard'], bullets))
+                player.addWeapon(Weapon_Back(player, sprites['weapon_standard'], all_sprites, sprites['bullet_back'], bullets))
+                player.addWeapon(Weapon_Rocket(player, sprites['weapon_rocket'], all_sprites, sprites['bullet_rocket'], bullets))
                 player.addBuddy(Buddy(player))
                 
     #2 Update
@@ -983,7 +983,9 @@ while running:
             player.shield = 100
             
             player.clearWeapons()
-            player.addWeapon(Weapon_Standard(player))
+            #player.addWeapon(Weapon_Standard(player))
+            player.addWeapon(Weapon_Standard(player, sprites['weapon_standard'], all_sprites, sprites['bullet_standard'], bullets))
+
             player.clearBuddies()
             player.bullets = 500
             weapon = 0
@@ -1002,13 +1004,16 @@ while running:
             player.increaseBullets(50)
             
             if weapon == 1:
-                player.addWeapon(Weapon_Back(player))
+                #player.addWeapon(Weapon_Back(player))
+                player.addWeapon(Weapon_Back(player, sprites['weapon_standard'], all_sprites, sprites['bullet_back'], bullets))
                 
             if weapon == 2:
-                player.addWeapon(Weapon_Rocket(player))
+                #player.addWeapon(Weapon_Rocket(player))
+                player.addWeapon(Weapon_Rocket(player, sprites['weapon_rocket'], all_sprites, sprites['bullet_rocket'], bullets))
                 
             if weapon == 3:
-                player.addWeapon(Weapon_Side(player))
+                #player.addWeapon(Weapon_Side(player))
+                player.addWeapon(Weapon_Side(player, sprites['weapon_standard'], all_sprites, sprites['bullet_standard'], bullets))
                 
         if hit.type == 'buddy':
                 player.addBuddy(Buddy(player))
